@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My QR Scanner</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body>
+  <h2>Mobile QR Scanner</h2>
+  <p>Tap Start and allow camera access when prompted.</p>
+  <button id="start">Start camera</button>
+  <button id="stop">Stop camera</button>
+  <div id="reader" style="width:100%;max-width:400px"></div>
+  <p id="result">No QR code scanned yet.</p>
+
+  <script>
+    const scanner = new Html5Qrcode("reader");
+    let running = false;
+
+    document.getElementById("start").onclick = async () => {
+      if (running) return;
+      try {
+        await scanner.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: { width: 250, height: 250 } },
+          text => {
+            document.getElementById("result").textContent =
+              "QR result: " + text;
+          },
+          () => {}
+        );
+        running = true;
+      } catch (error) {
+        alert("Camera could not start: " + error);
+      }
+    };
+
+    document.getElementById("stop").onclick = async () => {
+      if (running) {
+        await scanner.stop();
+        running = false;
+      }
+    };
+  </script>
+</body>
+</html>
